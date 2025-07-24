@@ -10,19 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout public repo
+        uses: actions/checkout@v4
+
       - name: Debug: Show initial info
         run: |
           echo "Current directory:"
           pwd
           echo "Listing files:"
-          ls -alh
-
-      - name: Checkout public repo
-        uses: actions/checkout@v4
-
-      - name: Debug: Show repo after checkout
-        run: |
-          echo "After checkout:"
           ls -alh
 
       - name: Clone private repo (mika-ai)

@@ -61,4 +61,4 @@ jobs:
           git diff --cached --quiet || git commit -m "Sync Assets/Scripts and mika_func.md from private repo"
           git log -1
           echo "About to push..."
-          git push https://osmarbetancourt:"${PAT}"@github.com/osmarbetancourt/project-mika-ai.git HEAD:main || { echo 'Push failed!'; exit 1; }
+          git push https://osmarbetancourt:${PAT}@github.com/osmarbetancourt/project-mika-ai.git HEAD:main || { echo 'Push failed!'; exit 1; }

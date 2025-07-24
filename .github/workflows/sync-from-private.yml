@@ -1,0 +1,37 @@
+name: Sync selected files from private mika-ai
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # Every day at 3:00 UTC
+
+jobs:
+  sync-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout public repo
+        uses: actions/checkout@v4
+
+      - name: Clone private repo (mika-ai)
+        env:
+          PAT: ${{ secrets.MIKA_AI_PAT }}
+        run: |
+          git clone https://osmarbetancourt:${PAT}@github.com/osmarbetancourt/mika-ai.git private_mika_ai
+
+      - name: Copy desired files and folders
+        run: |
+          rm -rf Assets/Scripts
+          rm -f python_scripts/mika_func.md
+          mkdir -p Assets
+          cp -r private_mika_ai/Assets/Scripts Assets/
+          mkdir -p python_scripts
+          cp private_mika_ai/python_scripts/mika_func.md python_scripts/
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "osmarbetancourt"
+          git config user.email "oaba.dev@gmail.com"
+          git add Assets/Scripts python_scripts/mika_func.md
+          git diff --cached --quiet || git commit -m "Sync Assets/Scripts and mika_func.md from private repo"
+          git push

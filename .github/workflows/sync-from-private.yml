@@ -1,6 +1,6 @@
 name: Sync selected files from private mika-ai
 
-"on":
+on:
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * *' # Every day at 3:00 UTC
@@ -12,8 +12,11 @@ jobs:
     steps:
       - name: Checkout public repo
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # Remove default token
+          token: ${{ secrets.MIKA_AI_PAT }}  # Use your PAT
 
-      - name: "Debug: Show initial info"
+      - name: Debug: Show initial info
         run: |
           echo "Current directory:"
           pwd
@@ -25,7 +28,7 @@ jobs:
           PAT: ${{ secrets.MIKA_AI_PAT }}
         run: |
           set -x
-          git clone https://osmarbetancourt:"${PAT}"@github.com/osmarbetancourt/mika-ai.git private_mika_ai
+          git clone https://osmarbetancourt:${PAT}@github.com/osmarbetancourt/mika-ai.git private_mika_ai
           echo "Private repo contents:"
           ls -alh private_mika_ai
 
@@ -42,15 +45,13 @@ jobs:
           ls -alh Assets/Scripts || true
           ls -alh python_scripts || true
 
-      - name: "Debug: Git status before commit"
+      - name: Debug: Git status before commit
         run: |
           git status
           git config --list
           git remote -v
 
       - name: Commit and push if changed
-        env:
-          PAT: ${{ secrets.MIKA_AI_PAT }}
         run: |
           set -x
           git config user.name "osmarbetancourt"
@@ -61,4 +62,4 @@ jobs:
           git diff --cached --quiet || git commit -m "Sync Assets/Scripts and mika_func.md from private repo"
           git log -1
           echo "About to push..."
-          git push https://osmarbetancourt:${PAT}@github.com/osmarbetancourt/project-mika-ai.git HEAD:main || { echo 'Push failed!'; exit 1; }
+          git push origin main || { echo 'Push failed!'; exit 1; }

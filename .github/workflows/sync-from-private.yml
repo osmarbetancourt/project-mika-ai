@@ -3,7 +3,7 @@ name: Sync selected files from private mika-ai
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *' # Every day at 3:00 UTC
+    - cron: '0 3 * * *'
 
 jobs:
   sync-files:
@@ -13,8 +13,8 @@ jobs:
       - name: Checkout public repo
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # Remove default token
-          token: ${{ secrets.MIKA_AI_PAT }}  # Use your PAT
+          persist-credentials: false
+          token: ${{ secrets.MIKA_AI_PAT }}
 
       - name: Debug: Show initial info
         run: |

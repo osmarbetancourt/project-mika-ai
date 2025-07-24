@@ -34,4 +34,4 @@ jobs:
           git config user.email "oaba.dev@gmail.com"
           git add Assets/Scripts python_scripts/mika_func.md
           git diff --cached --quiet || git commit -m "Sync Assets/Scripts and mika_func.md from private repo"
-          git push
+          git push https://osmarbetancourt:${{ secrets.MIKA_AI_PAT }}@github.com/osmarbetancourt/project-mika-ai.git HEAD:main

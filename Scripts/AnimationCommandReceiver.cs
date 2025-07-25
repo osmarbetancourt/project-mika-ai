@@ -18,6 +18,19 @@ public class AnimationCommandReceiver : MonoBehaviour
     {
         Debug.Log("[AnimationCommandReceiver] PlayAnimation called with: " + animName);
 
+        // Validate inputs
+        if (animator == null)
+        {
+            Debug.LogError("[AnimationCommandReceiver] Animator is null!");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(animName))
+        {
+            Debug.LogError("[AnimationCommandReceiver] Animation name is null or empty!");
+            return;
+        }
+
         // For non-idle, use Play for immediate switch
         if (animName != idleAnimationName)
             animator.Play(animName);

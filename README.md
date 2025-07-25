@@ -2,6 +2,11 @@
 
 **An Anime AI Companion with Voice Interaction and Intelligent Responses**
 
+<div align="center">
+  <img src="Screenshot 2025-07-24 233533.png" alt="Mika AI Companion" width="400">
+  <p><em>Meet Mika - Your Anime AI Companion</em></p>
+</div>
+
 Mika is an interactive anime AI companion built with Unity that combines advanced speech processing, artificial intelligence, and real-time avatar animation to create an engaging conversational experience. Whether you want to chat, ask questions, or simply interact with a responsive AI personality, Mika brings your anime companion dreams to life.
 
 ## ✨ Features

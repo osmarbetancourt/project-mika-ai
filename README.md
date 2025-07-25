@@ -18,9 +18,11 @@ Mika is an interactive anime AI companion built with Unity that combines advance
 - **Real-time Response**: Fallback animation system for immediate user feedback
 - **Microphone Recording**: Built-in voice capture functionality
 - **Expression Control**: Dynamic facial expressions and lip sync
+- **Multi-language Support**: Supports English, Spanish, and Japanese languages
+- **LLM Integration**: Advanced AI conversations using Gemini Flash 2.5 and Flash Lite 2.5
 
 ### 🔮 **Planned Features**
-- **Advanced AI Persona**: Memory, mood tracking, and character trait evolution
+- **Advanced AI Persona**: Character trait evolution and mood coordination
 - **Multi-modal Intelligence**: Vision processing for images and files
 - **Web Search Integration**: Real-time information retrieval with citations
 - **Plugin System**: Extensible tool and API integration
@@ -176,8 +178,9 @@ project-mika-ai/
 ## 💬 How to Interact with Mika
 
 1. **Voice Input**: Speak into your microphone - Mika will transcribe and respond
-2. **Current Mode**: In the current implementation, Mika will repeat back what you say using text-to-speech
-3. **Future Modes**: Advanced AI conversations, web search integration, and multi-modal interactions
+2. **AI Conversations**: Mika now features advanced AI conversations powered by Gemini models
+3. **Multi-language**: Interact in English, Spanish, or Japanese
+4. **Future Modes**: Web search integration and multi-modal interactions coming soon
 
 ## 🎯 Development Status
 
@@ -188,8 +191,8 @@ project-mika-ai/
 | Audio Processing | ✅ Implemented | WAV/MP3 support |
 | Unity Integration | ✅ Implemented | Animation & audio commands |
 | Fallback Responses | ✅ Implemented | Immediate user feedback |
-| LLM Integration | 🔄 Planned | Advanced AI conversations |
-| Persona System | 🔄 Planned | Memory, mood, traits |
+| LLM Integration | ✅ Implemented | Gemini Flash 2.5 & Flash Lite 2.5 with fallback |
+| Persona System | 🔄 In Progress | Memory, mood implemented; traits pending |
 | Web Search | 🔄 Planned | Real-time information |
 | Vision Processing | 🔄 Planned | Image and file analysis |
 | Plugin System | 🔄 Planned | Extensible functionality |
@@ -221,8 +224,9 @@ We welcome contributions to make Mika even better! Here's how you can help:
 - [x] Audio processing pipeline
 
 ### Phase 2: Intelligence (In Progress)
-- [ ] LLM integration for conversations
-- [ ] Basic persona system
+- [x] LLM integration for conversations
+- [x] Basic persona system (memory, mood)
+- [ ] Character trait evolution and mood coordination
 - [ ] Context management
 
 ### Phase 3: Advanced Features

@@ -8,7 +8,8 @@ public class MikaExpressionController : MonoBehaviour
     Coroutine _resetCoroutine;
     string _lastExpr;
 
-    // Supported expressions
+    // Supported expressions and their key bindings:
+    // 2 = sad, 4 = angry, B = blink, S = surprised, L = blinkLeft, D = lookDown, 0 = reset
     static readonly ExpressionPreset[] _supported = {
         ExpressionPreset.sad,
         ExpressionPreset.angry,
@@ -101,33 +102,12 @@ public class MikaExpressionController : MonoBehaviour
     {
         if (_vrmInstance == null || _vrmInstance.Runtime == null) return;
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SetExpression("sad");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SetExpression("angry");
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            SetExpression("blink");
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SetExpression("surprised");
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            SetExpression("blinkLeft");
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            SetExpression("lookDown");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SetExpression("reset");
-        }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SetExpression("sad");
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SetExpression("angry");
+        if (Input.GetKeyDown(KeyCode.B)) SetExpression("blink");
+        if (Input.GetKeyDown(KeyCode.S)) SetExpression("surprised");
+        if (Input.GetKeyDown(KeyCode.L)) SetExpression("blinkLeft");
+        if (Input.GetKeyDown(KeyCode.D)) SetExpression("lookDown");
+        if (Input.GetKeyDown(KeyCode.Alpha0)) SetExpression("reset");
     }
 }

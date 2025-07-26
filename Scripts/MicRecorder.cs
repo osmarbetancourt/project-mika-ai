@@ -40,7 +40,7 @@ public class MicRecorder : MonoBehaviour
     {
         isRecording = true;
         SetButtonText("Stop");
-        recordedClip = Microphone.Start(micName, false, 30, sampleRate); // max 30s
+        recordedClip = Microphone.Start(micName, false, 180, sampleRate); // max 180s
     }
 
     void StopRecordingAndSend()

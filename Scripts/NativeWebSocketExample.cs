@@ -10,8 +10,16 @@ public class NativeWebSocketExample : MonoBehaviour
     public AnimationCommandReceiver animationReceiver;
     public AudioCommandReceiver audioReceiver;
 
-    private Queue<byte[]> audioQueue = new Queue<byte[]>();
+    private Queue<(byte[], string)> audioQueue = new Queue<(byte[], string)>();
     private bool audioIsPlaying = false;
+
+    // Pending animation/expression for next audio
+    private string pendingAnimation = null;
+    private string pendingExpression = null;
+    private float pendingExpressionDuration = 2f;
+
+    // Track flag from server
+    private string nextAudioType = null; // "fallback" or "response"
 
     async void Start()
     {
@@ -23,8 +31,8 @@ public class NativeWebSocketExample : MonoBehaviour
 
         websocket.OnMessage += (bytes) =>
         {
-            string message = "";
             bool isText = false;
+            string message = "";
 
             if (bytes.Length > 0 && IsProbablyText(bytes))
             {
@@ -32,15 +40,29 @@ public class NativeWebSocketExample : MonoBehaviour
                 isText = true;
             }
 
-            if (isText && (message.StartsWith("expression:") || message.StartsWith("animation:")))
+            if (isText)
             {
-                Debug.Log("[WebSocket] Received OnMessage! " + message);
-                HandleCommand(message);
+                if (message.StartsWith("audio:"))
+                {
+                    nextAudioType = message.Substring("audio:".Length).Trim(); // fallback or response
+                    Debug.Log("[WebSocket] Next audio type set to: " + nextAudioType);
+                }
+                else if (message.StartsWith("expression:") || message.StartsWith("animation:"))
+                {
+                    Debug.Log("[WebSocket] Received OnMessage! " + message);
+                    HandleCommand(message);
+                }
             }
             else
             {
-                Debug.Log($"[WebSocket] Received audio data ({bytes.Length} bytes) at {System.DateTime.Now:HH:mm:ss.fff}");
-                lock (audioQueue) audioQueue.Enqueue(bytes);
+                if (nextAudioType == null)
+                {
+                    nextAudioType = "response"; // default if not set
+                    Debug.Log("[WebSocket] No audio type set, using default 'response'.");
+                }
+                audioQueue.Enqueue((bytes, nextAudioType));
+                Debug.Log($"[WebSocket] Received audio data ({bytes.Length} bytes), type: {nextAudioType} at {System.DateTime.Now:HH:mm:ss.fff}");
+                nextAudioType = null;
                 TryPlayNextAudio();
             }
         };
@@ -55,6 +77,7 @@ public class NativeWebSocketExample : MonoBehaviour
 #endif
     }
 
+    // Store commands for next audio playback
     void HandleCommand(string command)
     {
         Debug.Log("[WebSocket] HandleCommand called with: " + command);
@@ -77,13 +100,14 @@ public class NativeWebSocketExample : MonoBehaviour
             }
 
             Debug.Log($"[WebSocket] Parsed expression: {expr} (duration {duration}s)");
-            mikaExpressionController?.SetExpression(expr, duration);
+            pendingExpression = expr;
+            pendingExpressionDuration = duration;
         }
         else if (command.StartsWith("animation:"))
         {
             string anim = command.Substring("animation:".Length).Trim();
             Debug.Log("[WebSocket] Parsed animation: " + anim);
-            animationReceiver?.PlayAnimation(anim);
+            pendingAnimation = anim;
         }
         else
         {
@@ -106,7 +130,14 @@ public class NativeWebSocketExample : MonoBehaviour
 
     private async void OnApplicationQuit()
     {
-        await websocket.Close();
+        if (websocket != null)
+        {
+            await websocket.Close();
+        }
+        else
+        {
+            Debug.LogWarning("[WebSocket] websocket was null during OnApplicationQuit.");
+        }
     }
 
     bool IsProbablyText(byte[] bytes)
@@ -126,24 +157,48 @@ public class NativeWebSocketExample : MonoBehaviour
     void TryPlayNextAudio()
     {
         if (audioIsPlaying) return;
-        byte[] nextAudio = null;
-        lock (audioQueue)
+        (byte[] audioBytes, string audioType) nextAudio = (null, null);
+        if (audioQueue.Count > 0) nextAudio = audioQueue.Dequeue();
+        if (nextAudio.audioBytes != null)
         {
-            if (audioQueue.Count > 0) nextAudio = audioQueue.Dequeue();
-        }
-        if (nextAudio != null)
-        {
-            StartCoroutine(PlayAudioCoroutine(nextAudio));
+            StartCoroutine(PlayAudioCoroutine(nextAudio.audioBytes, nextAudio.audioType));
         }
     }
 
-    System.Collections.IEnumerator PlayAudioCoroutine(byte[] audioBytes)
+    // After starting audio playback, trigger pending animation/expression
+    System.Collections.IEnumerator PlayAudioCoroutine(byte[] audioBytes, string audioType)
     {
         audioIsPlaying = true;
         if (audioReceiver != null)
         {
-            float duration = audioReceiver.PlayWavBytes(audioBytes); // <-- see below
-            if (duration <= 0) duration = 5f; // fallback if you can't get duration
+            float duration = audioReceiver.PlayWavBytes(audioBytes);
+            if (duration <= 0) duration = 5f;
+
+            if (audioType == "fallback")
+            {
+                // Always trigger fallback visuals for fallback audio
+                Debug.Log("[WebSocket] Fallback audio detected (flag), forcing Thinking/blink animation/expression.");
+                animationReceiver?.PlayAnimation("Thinking");
+                mikaExpressionController?.SetExpression("blink", 2.5f);
+                pendingAnimation = null;
+                pendingExpression = null;
+                pendingExpressionDuration = 2f;
+            }
+            else // response
+            {
+                if (!string.IsNullOrEmpty(pendingAnimation))
+                {
+                    animationReceiver?.PlayAnimation(pendingAnimation);
+                    pendingAnimation = null;
+                }
+                if (!string.IsNullOrEmpty(pendingExpression))
+                {
+                    mikaExpressionController?.SetExpression(pendingExpression, pendingExpressionDuration);
+                    pendingExpression = null;
+                    pendingExpressionDuration = 2f;
+                }
+            }
+
             yield return new WaitForSeconds(duration + 0.1f);
         }
         else

@@ -11,24 +11,31 @@ Mika is an interactive anime AI companion built with Unity that combines advance
 
 ## ✨ Features
 
-### 🎤 **Currently Implemented**
-- **Voice Input & Output**: Real-time speech-to-text and text-to-speech conversion using Google services
+### 🎤 **MVP v1 - Currently Implemented**
+- **Voice Input & Output**: Real-time speech-to-text and text-to-speech conversion using Google services *(Audio input only)*
 - **Audio Processing**: High-quality voice processing with waifu voice synthesis
-- **Unity Integration**: Seamless audio and animation command handling
+- **Unity Integration**: Seamless audio and animation command handling with synchronized visual responses
 - **Real-time Response**: Fallback animation system for immediate user feedback
 - **Microphone Recording**: Built-in voice capture functionality
-- **Expression Control**: Dynamic facial expressions and lip sync
+- **Expression Control**: Dynamic facial expressions and lip sync synchronized with audio
 - **Emotional Intelligence**: LLM-powered emotional reaction inference that determines appropriate animations, facial expressions, and durations based on conversation context
 - **Multi-language Support**: Supports English, Spanish, and Japanese languages
 - **LLM Integration**: Advanced AI conversations using Gemini Flash 2.5 and Flash Lite 2.5
+- **Long-term Memory**: Conversation memory that persists for approximately 250 days without manual pruning
 
-### 🔮 **Planned Features**
-- **Advanced AI Persona**: Character trait evolution and mood coordination
-- **Multi-modal Intelligence**: Vision processing for images and files
-- **Web Search Integration**: Real-time information retrieval with citations
+### 🚧 **Next Steps (Post-MVP)**
+- **Time & Date Awareness**: Mika will be aware of current day, time, and up-to-date information
+- **Perplexity-style Workflow**: Real-time information retrieval and processing
+- **Animation System Fixes**: Resolve Unity C# animation issues
+- **Distribution Ready**: Package as .exe or installation wizard for user consumption
+
+### 🔮 **Future Versions (Not in MVP v1)**
+- **Multi-modal Input/Output**: Vision processing for images and files *(Not in v1)*
+- **Vector Database**: Advanced semantic search capabilities *(Not in v1)*
+- **URL Parsing**: Web content processing *(Not in v1)*
 - **Plugin System**: Extensible tool and API integration
-- **Smart Context Management**: Intelligent conversation history and summarization
-- **Enhanced Animations**: Gesture recognition and emotion-based movements
+- **Enhanced Web Search**: Real-time information retrieval with citations
+- **Advanced AI Persona**: Character trait evolution and mood coordination
 - **Safety & Moderation**: Content filtering and user protection
 
 ## 🏗️ Architecture Overview
@@ -143,13 +150,45 @@ flowchart TD
     %% - All speech/text/LLM/emotion steps support dynamic language selection (English, Spanish, Japanese)
 ```
 
+## 🎭 Animation & Expression System
+
+Mika's animation and expression system works through a sophisticated WebSocket-based communication pipeline that coordinates audio playback with visual responses:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant NativeWebSocketExample
+    participant AnimationController
+    participant ExpressionController
+    participant AudioPlayer
+
+    User->>NativeWebSocketExample: Sends WebSocket message (audio or command)
+    NativeWebSocketExample->>NativeWebSocketExample: If "audio:" message, set nextAudioType
+    NativeWebSocketExample->>NativeWebSocketExample: If audio bytes, enqueue (audio, type)
+    NativeWebSocketExample->>NativeWebSocketExample: If command, store as pending
+    NativeWebSocketExample->>AudioPlayer: PlayAudioCoroutine(audio, type)
+    AudioPlayer->>NativeWebSocketExample: On audio end
+    alt audioType == "fallback"
+        NativeWebSocketExample->>AnimationController: Play "Thinking"
+        NativeWebSocketExample->>ExpressionController: Set "blink"
+        NativeWebSocketExample->>NativeWebSocketExample: Clear pending commands
+    else audioType == "response"
+        NativeWebSocketExample->>AnimationController: Play pendingAnimation
+        NativeWebSocketExample->>ExpressionController: Set pendingExpression
+        NativeWebSocketExample->>NativeWebSocketExample: Clear pending commands
+    end
+```
+
+This system ensures that Mika's visual responses (animations and facial expressions) are perfectly synchronized with her audio responses, providing a natural and engaging interaction experience.
+
 ## 🛠️ Technical Stack
 
 - **Frontend**: Unity 3D with C# scripting
 - **Speech Processing**: Google Enhanced Speech-to-Text and Text-to-Speech services
 - **Audio**: WAV/MP3 processing with real-time lip sync
 - **Networking**: WebSocket communication for real-time interactions
-- **Future**: Integration with advanced LLMs, vector databases, and web APIs
+- **AI**: Gemini Flash 2.5 and Flash Lite 2.5 for conversation processing
+- **Memory**: Long-term conversation memory (up to ~250 days without pruning)
 
 ## 🗂️ Project Structure
 
@@ -162,10 +201,12 @@ project-mika-ai/
 │   ├── MikaExpressionController.cs   # Facial expression control
 │   ├── SimpleLipSync.cs              # Lip synchronization
 │   ├── WavUtility.cs                 # Audio file processing
-│   └── NativeWebSocketExample.cs     # WebSocket communication
-├── mika_func.md                      # Technical workflow documentation
+│   └── NativeWebSocketExample.cs     # WebSocket communication & animation coordination
+├── mika_func.md                      # Detailed technical workflow documentation
 └── README.md                         # This file
 ```
+
+For detailed technical documentation about Mika's internal workflow and architecture, see [mika_func.md](mika_func.md).
 
 ## 🚀 Getting Started
 
@@ -198,26 +239,38 @@ project-mika-ai/
 
 ## 💬 How to Interact with Mika
 
-1. **Voice Input**: Speak into your microphone - Mika will transcribe and respond
-2. **AI Conversations**: Mika now features advanced AI conversations powered by Gemini models
+1. **Voice Input Only**: Speak into your microphone - Mika will transcribe and respond *(MVP v1 supports audio input only)*
+2. **AI Conversations**: Mika features advanced AI conversations powered by Gemini models with long-term memory
 3. **Multi-language**: Interact in English, Spanish, or Japanese
-4. **Future Modes**: Web search integration and multi-modal interactions coming soon
+4. **Synchronized Responses**: Enjoy perfectly timed animations and expressions that match Mika's voice responses
+5. **Extended Memory**: Mika remembers your conversations for approximately 250 days without needing memory management
 
 ## 🎯 Development Status
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Speech-to-Text | ✅ Implemented | Google Enhanced STT |
+| **MVP v1 Features** | | |
+| Speech-to-Text | ✅ Implemented | Google Enhanced STT (Audio input only) |
 | Text-to-Speech | ✅ Implemented | Waifu voice synthesis |
 | Audio Processing | ✅ Implemented | WAV/MP3 support |
-| Unity Integration | ✅ Implemented | Animation & audio commands |
+| Unity Integration | ✅ Implemented | Animation & audio commands with sync |
 | Fallback Responses | ✅ Implemented | Immediate user feedback |
-| LLM Integration | ✅ Implemented | Gemini Flash 2.5 & Flash Lite 2.5 with fallback |
-| Emotional Intelligence | ✅ Implemented | LLM-powered emotion inference with animation/expression commands |
-| Persona System | 🔄 In Progress | Memory, mood implemented; traits pending |
-| Web Search | 🔄 Planned | Real-time information |
-| Vision Processing | 🔄 Planned | Image and file analysis |
-| Plugin System | 🔄 Planned | Extensible functionality |
+| LLM Integration | ✅ Implemented | Gemini Flash 2.5 & Flash Lite 2.5 |
+| Emotional Intelligence | ✅ Implemented | LLM-powered emotion inference |
+| Long-term Memory | ✅ Implemented | ~250 days conversation retention |
+| Multi-language Support | ✅ Implemented | English, Spanish, Japanese |
+| **Next Steps** | | |
+| Time/Date Awareness | 🔄 Next Priority | Current day, time, up-to-date info |
+| Perplexity Workflow | 🔄 Next Priority | Real-time information processing |
+| Unity Animation Fixes | 🔄 Next Priority | C# animation system improvements |
+| Distribution Package | 🔄 Next Priority | .exe/installer for users |
+| **Future Features** | | |
+| Multi-modal Input/Output | ❌ Not in v1 | Images, files (future version) |
+| Vector Database | ❌ Not in v1 | Advanced semantic search |
+| URL Parsing | ❌ Not in v1 | Web content processing |
+| Plugin System | 🔄 Future | Extensible functionality |
+| Advanced Web Search | 🔄 Future | Real-time information with citations |
+| Vision Processing | 🔄 Future | Image and file analysis |
 
 ## 🤝 Contributing
 
@@ -231,36 +284,41 @@ We welcome contributions to make Mika even better! Here's how you can help:
 
 ### Areas We Need Help With
 
-- 🧠 **AI Integration**: Implementing LLM conversation capabilities
-- 🎨 **Animation System**: Enhanced avatar expressions and gestures
-- 🔍 **Web Search**: Real-time information retrieval
-- 🛡️ **Safety**: Content moderation and user protection
-- 📱 **Platform Support**: Mobile and web deployment
-- 🎵 **Audio**: Voice quality improvements and effects
+- 🕐 **Time/Date Integration**: Implementing real-time awareness and up-to-date information
+- 🎨 **Unity Animation System**: Fixing C# animation issues and improving synchronization
+- 📦 **Distribution**: Creating .exe installers and user-friendly packaging
+- 🌐 **Perplexity Workflow**: Real-time information retrieval and processing
+- 🔮 **Future Features**: Multi-modal support, vector databases, web parsing (post-MVP)
+- 🛡️ **Safety & Moderation**: Content filtering and user protection systems
 
 ## 📋 Roadmap
 
-### Phase 1: Foundation (Current)
-- [x] Basic voice input/output
-- [x] Unity integration
-- [x] Audio processing pipeline
-
-### Phase 2: Intelligence (In Progress)
+### Phase 1: MVP v1 Foundation (Current - Completed)
+- [x] Voice input/output (audio only)
+- [x] Unity integration with synchronized animations
+- [x] Audio processing pipeline with emotional intelligence
 - [x] LLM integration for conversations
-- [x] Basic persona system (memory, mood)
-- [ ] Character trait evolution and mood coordination
-- [ ] Context management
+- [x] Long-term memory (250+ days)
+- [x] Multi-language support (EN/ES/JP)
 
-### Phase 3: Advanced Features
-- [ ] Multi-modal input (images, files)
-- [ ] Web search integration
-- [ ] Plugin ecosystem
-- [ ] Advanced animations
+### Phase 2: MVP v1 Polish (Next - In Progress)
+- [ ] Time and date awareness
+- [ ] Up-to-date information processing (Perplexity-style workflow)
+- [ ] Unity C# animation system fixes
+- [ ] Distribution packaging (.exe/installer)
 
-### Phase 4: Polish & Distribution
+### Phase 3: Enhanced Features (Future)
+- [ ] Multi-modal input (images, files, text)
+- [ ] Vector database integration
+- [ ] URL parsing and web content processing
+- [ ] Advanced web search with citations
+- [ ] Plugin ecosystem and API integrations
+
+### Phase 4: Advanced AI & Polish (Future)
+- [ ] Advanced persona system with trait evolution
 - [ ] Mobile platform support
 - [ ] Performance optimization
-- [ ] User customization options
+- [ ] Enhanced safety and moderation systems
 
 ## 📄 License
 

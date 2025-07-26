@@ -40,51 +40,47 @@ flowchart TD
     ReturnAudio --> Store["Store message/response, analytics, feedback loop, persona update (to do)"]
     Store --> End["End"]
 
-    NeedsLiveInfo -- Yes --> WebSearch["Perform real-time web search"]
+    NeedsLiveInfo -- Yes --> WebSearch["Perform real-time web search (MVP: top_p/k news, world state awareness)"]
     WebSearch --> ParseWeb["Parse web results, extract relevant content"]
     ParseWeb --> CiteInject["Inject citations and sources into context"]
     NeedsLiveInfo -- No --> SkipWeb["Skip web search"]
-    CiteInject --> RetrieveChunks["Retrieve relevant chunks: vector DB, semantic/lexical search"]
+    CiteInject --> RetrieveChunks["Retrieve relevant chunks: vector DB, semantic/lexical search (RAG, MVP: basic, advanced in future)"]
     SkipWeb --> RetrieveChunks
 
-    RetrieveChunks --> NeedsPlugin{"Prompt requires plugins/tools?"}
-    NeedsPlugin -- Yes --> PluginCall["Call plugin/API/tool, execute code"]
-    PluginCall --> PluginResp["Retrieve plugin/tool response"]
-    NeedsPlugin -- No --> SkipPlugin["Skip plugin/tool execution"]
-    PluginResp --> JoinContext["Join all context sources"]
-    SkipPlugin --> JoinContext
+    RetrieveChunks --> AddConscience["Add date/time, last and current message timestamp, user/session info, world state (implemented/MVP)"]
+    AddConscience --> JoinContext["Join all context sources"]
 
     JoinContext --> HasImage{"Check for image/file input"}
-    HasImage -- Yes --> Vision["Send to vision model/OCR, extract info"]
-    Vision --> TokenizeExtracted["Tokenize extracted info and add to context"]
+    HasImage -- Yes --> Vision["Send to vision model/OCR, extract info (planned)"]
+    Vision --> TokenizeExtracted["Tokenize extracted info and add to context (planned)"]
     HasImage -- No --> Proceed["Proceed"]
     TokenizeExtracted --> SessionAssembly["Session/context window assembly"]
     Proceed --> SessionAssembly
 
-    SessionAssembly --> Persona["Persona/Character State Update (Mika memory, mood, traits) (to do)"]
-    Persona --> Moderation["Safety/moderation checks (to do)"]
-    Moderation --> Tokens["Token calculation and truncation/summarization (to do)"]
-    Tokens --> TokenLimit{"Token limit exceeded? (to do)"}
-    TokenLimit -- Yes --> Summarize["Summarize, further truncate, or reroute (to do)"]
-    TokenLimit -- No --> ModelSelect["Select best LLM/vision model (to do)"]
-    Summarize --> ModelSelect
+    SessionAssembly --> Persona["Persona/Character State Update (Mika memory, mood, traits) (to do, MVP: basic time awareness)"]
+    Persona --> Moderation["Safety/moderation checks (planned)"]
+    Moderation --> Tokens["Token calculation and truncation/summarization (MVP: truncation implemented, summarization planned)"]
+    Tokens --> TokenLimit{"Token limit exceeded? (implemented)"}
+    TokenLimit -- Yes --> Truncate["Truncate oldest messages (implemented, MVP)"]
+    TokenLimit -- No --> ModelSelect["Select best LLM/vision model (planned, MVP: single model)"]
+    Truncate --> ModelSelect
 
-    ModelSelect --> LLM["LLM generation: produce answer/code (Flash Lite, persona, roleplay, to do, multi-language)"]
-    LLM --> RespType["Response Type Selector (text/voice/animation/image) (to do)"]
+    ModelSelect --> LLM["LLM generation: produce answer/code (Flash Lite, persona, roleplay, implemented, multi-language)"]
+    LLM --> RespType["Response Type Selector (text/voice/animation/image) (planned, MVP: text/voice/animation implemented)"]
 
-    RespType --> NeedsVoice{"Is voice response needed? (to do)"}
+    RespType --> NeedsVoice{"Is voice response needed? (MVP: implemented)"}
     NeedsVoice -- Yes --> TTS
-    NeedsVoice -- No --> SkipTTS["Skip TTS (to do)"]
+    NeedsVoice -- No --> SkipTTS["Skip TTS (MVP: implemented)"]
 
-    RespType --> NeedsAnim{"Is animation/emotion/gesture needed? (to do)"}
-    NeedsAnim -- Yes --> AnimCmd["Generate Avatar Command (Unity triggers) (to do)"]
-    NeedsAnim -- No --> SkipAnim["Skip animation command (to do)"]
+    RespType --> NeedsAnim{"Is animation/emotion/gesture needed? (MVP: implemented)"}
+    NeedsAnim -- Yes --> AnimCmd["Generate Avatar Command (Unity triggers) (MVP: implemented)"]
+    NeedsAnim -- No --> SkipAnim["Skip animation command (MVP: implemented)"]
 
-    AnimCmd --> ReturnAnim["Return animation command to Unity (to do)"]
+    AnimCmd --> ReturnAnim["Return animation command to Unity (MVP: implemented)"]
     SkipAnim --> ReturnAnim
 
-    LLM --> PostProc["Post-processing: formatting, markdown, citations, code blocks (to do)"]
-    PostProc --> ReturnText["Return AI text response to Unity (to do)"]
+    LLM --> PostProc["Post-processing: formatting, markdown, citations, code blocks (planned, MVP: basic formatting)"]
+    PostProc --> ReturnText["Return AI text response to Unity (implemented)"]
 
     ReturnText --> Store
     SkipTTS --> ReturnAudio
@@ -99,9 +95,10 @@ flowchart TD
     ExprDurOut -.-> ReturnAnim
 
     %% Comments:
-    %% - STT, ParrotLogic, TTS, ReturnAudio are implemented
-    %% - LLM, persona, RAG, plugins, websearch, and multimodal outputs are planned
-    %% - Fallback logic is now implemented and runs in parallel as soon as possible after user input
-    %% - Emotional intelligence/reaction inference is implemented and called after text is available
-    %% - All speech/text/LLM/emotion steps support dynamic language selection (English, Spanish, Japanese)
+    %% - MVP: STT, ParrotLogic, TTS, ReturnAudio, fallback, emotional intelligence, truncation (not summarization), RAG (basic), conscience (date/time/timestamps/news/world state), persona, animation, top_p/k web pages/news are implemented.
+    %% - Multimodal input/output, plugin/tools, advanced RAG, summarization, moderation/safety, advanced persona update, post-processing, model selection, and file access are planned for next phases.
+    %% - All speech/text/LLM/emotion steps support dynamic language selection (English, Spanish, Japanese).
+    %% - Message context is truncated (not summarized) for performance. Unlimited message memory unless pruned via admin action.
+    %% - Mika can reference today’s date, current/last message timestamp, and world state in responses.
+    %% - MVP does not include multimodal outputs, plugin/file access, or deep system integration.
 ```

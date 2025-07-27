@@ -101,4 +101,20 @@ flowchart TD
     %% - Message context is truncated (not summarized) for performance. Unlimited message memory unless pruned via admin action.
     %% - Mika can reference today’s date, current/last message timestamp, and world state in responses.
     %% - MVP does not include multimodal outputs, plugin/file access, or deep system integration.
+
+%% -------------------------------------------------------------------------------------
+%% --- NEW (2025 UPDATE): Google Vertex AI, Fuzzy Fact Search, Faiss Vector DB, Threads, and Large Context ---
+%% -------------------------------------------------------------------------------------
+
+%% - LLM backend is now Google Vertex AI SDK for Python (Gemini, Flash Lite, Embedding models).
+%% - Fact memory is implemented using fuzzy search (difflib) over a facts table. Only the most relevant facts (up to 20) are injected into context per turn.
+%% - Semantic memory uses Faiss vector DB for similarity search (vector retrieval augmented generation).
+%% - Conversation history supports up to 12,000 tokens and ~200 messages in fast cache. Remainder is managed in DB, passed as context, or pruned.
+%% - Fact extraction, semantic vector embedding, and classification run in background threads for performance and responsiveness.
+%% - All context assembly (facts, semantic memories, recent turns) is dynamically pruned if token limits are reached, prioritizing most relevant data.
+%% - Persona and world state are continually updated using extracted facts and semantic memories.
+%% - System can handle large memory tables efficiently, limiting prompt injection to only top results.
+%% - All new architecture supports multi-language (English, Spanish, Japanese), with dynamic switching.
+
+%% -------------------------------------------------------------------------------------
 ```

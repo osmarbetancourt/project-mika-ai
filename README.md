@@ -9,6 +9,12 @@
 
 Mika is an interactive anime AI companion built with Unity that combines advanced speech processing, artificial intelligence, and real-time avatar animation to create an engaging conversational experience. Whether you want to chat, ask questions, or simply interact with a responsive AI personality, Mika brings your anime companion dreams to life.
 
+### ✨ Recent Technical Improvements
+- **Google Vertex AI Integration**: Migrated from hardcoded API URLs to official Google Vertex AI SDK for Python
+- **Hybrid RAG Architecture**: Combines fuzzy search on facts table with semantic vector database (Faiss) for intelligent context retrieval
+- **Optimized Memory Management**: 12,000 token context window with 200-message fast cache for enhanced performance
+- **Background Processing**: Fact extraction, semantic embedding, and classification run in separate threads for responsiveness
+
 ## ✨ Features
 
 ### 🎤 **MVP v1 - Currently Implemented**
@@ -21,7 +27,7 @@ Mika is an interactive anime AI companion built with Unity that combines advance
 - **Emotional Intelligence**: LLM-powered emotional reaction inference that determines appropriate animations, facial expressions, and durations based on conversation context
 - **Multi-language Support**: Supports English, Spanish, and Japanese languages
 - **LLM Integration**: Advanced AI conversations using Gemini Flash 2.5 and Flash Lite 2.5
-- **Long-term Memory**: Conversation memory that persists for approximately 250 days without manual pruning
+- **Enhanced Memory System**: Supports up to 12K tokens per request with cache for 200 most recent messages, featuring hybrid RAG approach with fuzzy search and semantic vector database
 
 ### 🚧 **Next Steps (Post-MVP)**
 - **Time & Date Awareness**: Mika will be aware of current day, time, and up-to-date information
@@ -31,7 +37,6 @@ Mika is an interactive anime AI companion built with Unity that combines advance
 
 ### 🔮 **Future Versions (Not in MVP v1)**
 - **Multi-modal Input/Output**: Vision processing for images and files *(Not in v1)*
-- **Vector Database**: Advanced semantic search capabilities *(Not in v1)*
 - **URL Parsing**: Web content processing *(Not in v1)*
 - **Plugin System**: Extensible tool and API integration
 - **Enhanced Web Search**: Real-time information retrieval with citations
@@ -187,8 +192,9 @@ This system ensures that Mika's visual responses (animations and facial expressi
 - **Speech Processing**: Google Enhanced Speech-to-Text and Text-to-Speech services
 - **Audio**: WAV/MP3 processing with real-time lip sync
 - **Networking**: WebSocket communication for real-time interactions
-- **AI**: Gemini Flash 2.5 and Flash Lite 2.5 for conversation processing
-- **Memory**: Long-term conversation memory (up to ~250 days without pruning)
+- **AI**: Google Vertex AI SDK with Gemini Flash 2.5 and Flash Lite 2.5 for conversation processing
+- **Memory System**: Hybrid RAG approach with fuzzy search (facts table) and semantic search (Faiss vector database)
+- **Context Management**: Up to 12K tokens per request with 200-message cache for optimal performance
 
 ## 🗂️ Project Structure
 
@@ -240,10 +246,10 @@ For detailed technical documentation about Mika's internal workflow and architec
 ## 💬 How to Interact with Mika
 
 1. **Voice Input Only**: Speak into your microphone - Mika will transcribe and respond *(MVP v1 supports audio input only)*
-2. **AI Conversations**: Mika features advanced AI conversations powered by Gemini models with long-term memory
+2. **AI Conversations**: Mika features advanced AI conversations powered by Google Vertex AI with intelligent memory management
 3. **Multi-language**: Interact in English, Spanish, or Japanese
 4. **Synchronized Responses**: Enjoy perfectly timed animations and expressions that match Mika's voice responses
-5. **Extended Memory**: Mika remembers your conversations for approximately 250 days without needing memory management
+5. **Intelligent Memory**: Mika uses hybrid RAG with fuzzy search and semantic vectors to remember relevant context from up to 200 recent messages
 
 ## 🎯 Development Status
 
@@ -255,9 +261,9 @@ For detailed technical documentation about Mika's internal workflow and architec
 | Audio Processing | ✅ Implemented | WAV/MP3 support |
 | Unity Integration | ✅ Implemented | Animation & audio commands with sync |
 | Fallback Responses | ✅ Implemented | Immediate user feedback |
-| LLM Integration | ✅ Implemented | Gemini Flash 2.5 & Flash Lite 2.5 |
+| LLM Integration | ✅ Implemented | Google Vertex AI SDK with Gemini models |
 | Emotional Intelligence | ✅ Implemented | LLM-powered emotion inference |
-| Long-term Memory | ✅ Implemented | ~250 days conversation retention |
+| Hybrid Memory System | ✅ Implemented | 12K tokens, 200-message cache, fuzzy + semantic search |
 | Multi-language Support | ✅ Implemented | English, Spanish, Japanese |
 | **Next Steps** | | |
 | Time/Date Awareness | 🔄 Next Priority | Current day, time, up-to-date info |
@@ -266,7 +272,6 @@ For detailed technical documentation about Mika's internal workflow and architec
 | Distribution Package | 🔄 Next Priority | .exe/installer for users |
 | **Future Features** | | |
 | Multi-modal Input/Output | ❌ Not in v1 | Images, files (future version) |
-| Vector Database | ❌ Not in v1 | Advanced semantic search |
 | URL Parsing | ❌ Not in v1 | Web content processing |
 | Plugin System | 🔄 Future | Extensible functionality |
 | Advanced Web Search | 🔄 Future | Real-time information with citations |
@@ -282,23 +287,15 @@ We welcome contributions to make Mika even better! Here's how you can help:
 4. **Push to the branch** (`git push origin feature/amazing-feature`)
 5. **Open a Pull Request**
 
-### Areas We Need Help With
-
-- 🕐 **Time/Date Integration**: Implementing real-time awareness and up-to-date information
-- 🎨 **Unity Animation System**: Fixing C# animation issues and improving synchronization
-- 📦 **Distribution**: Creating .exe installers and user-friendly packaging
-- 🌐 **Perplexity Workflow**: Real-time information retrieval and processing
-- 🔮 **Future Features**: Multi-modal support, vector databases, web parsing (post-MVP)
-- 🛡️ **Safety & Moderation**: Content filtering and user protection systems
-
 ## 📋 Roadmap
 
 ### Phase 1: MVP v1 Foundation (Current - Completed)
 - [x] Voice input/output (audio only)
 - [x] Unity integration with synchronized animations
 - [x] Audio processing pipeline with emotional intelligence
-- [x] LLM integration for conversations
-- [x] Long-term memory (250+ days)
+- [x] LLM integration with Google Vertex AI SDK
+- [x] Hybrid memory system (12K tokens, 200-message cache)
+- [x] RAG implementation (fuzzy search + semantic vector database)
 - [x] Multi-language support (EN/ES/JP)
 
 ### Phase 2: MVP v1 Polish (Next - In Progress)
@@ -309,7 +306,6 @@ We welcome contributions to make Mika even better! Here's how you can help:
 
 ### Phase 3: Enhanced Features (Future)
 - [ ] Multi-modal input (images, files, text)
-- [ ] Vector database integration
 - [ ] URL parsing and web content processing
 - [ ] Advanced web search with citations
 - [ ] Plugin ecosystem and API integrations

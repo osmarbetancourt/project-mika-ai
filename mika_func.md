@@ -34,6 +34,16 @@ flowchart TD
         AvoidDuplicates --> StoreFacts["Store facts in database (implemented)"]
     end
 
+    %% Bridge – where the facts come from
+    LLM --> ExtractFromMika
+    %% facts in Mika's answer
+    TranscribedText --> ExtractFromUser
+    %% facts in user message
+
+    %% Bridge – where the facts are later reused
+    StoreFacts --> AddConscience
+    %% inject fresh facts into conscience/context
+
     %% Fallback logic starts here
     subgraph FallbackParallel["Fallback Path (for voice input)"]
         direction LR

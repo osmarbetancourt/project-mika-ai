@@ -21,6 +21,19 @@ flowchart TD
         EmotionLLM --> ExprDurOut["Output: expression duration"]
     end
 
+    %% Fact Extraction Logic (MODIFIED)
+    subgraph FactExtraction["Fact Extraction Logic"]
+        direction LR
+        ExtractFromMika["Extract facts from Mika's reply (LLM, implemented)"]
+        ExtractFromUser["Extract facts from user's input (LLM, implemented)"]
+        RephraseFacts["Rephrase facts in Mika's perspective (implemented)"]
+        AvoidDuplicates["Avoid duplicate facts using fuzzy search (implemented)"]
+        ExtractFromMika --> RephraseFacts
+        ExtractFromUser --> RephraseFacts
+        RephraseFacts --> AvoidDuplicates
+        AvoidDuplicates --> StoreFacts["Store facts in database (implemented)"]
+    end
+
     %% Fallback logic starts here
     subgraph FallbackParallel["Fallback Path (for voice input)"]
         direction LR

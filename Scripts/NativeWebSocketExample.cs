@@ -2,6 +2,8 @@ using UnityEngine;
 using NativeWebSocket;
 using System.Text;
 using System.Collections.Generic;
+using System; // for Exception
+using System.Collections;
 
 public class NativeWebSocketExample : MonoBehaviour
 {
@@ -21,53 +23,96 @@ public class NativeWebSocketExample : MonoBehaviour
     // Track flag from server
     private string nextAudioType = null; // "fallback" or "response"
 
-    async void Start()
+    private bool websocketConnected = false;
+    private bool tryingToConnect = false;
+
+    // Expose connection state for UI/scripts
+    public bool IsConnected => websocket != null && websocket.State == WebSocketState.Open;
+
+    private void Start()
     {
-        websocket = new WebSocket("ws://localhost:3000");
+        StartCoroutine(ConnectWithRetry());
+    }
 
-        websocket.OnOpen += () => Debug.Log("[WebSocket] Connection open!");
-        websocket.OnError += (e) => Debug.Log("[WebSocket] Error! " + e);
-        websocket.OnClose += (e) => Debug.Log("[WebSocket] Connection closed!");
-
-        websocket.OnMessage += (bytes) =>
+    private IEnumerator ConnectWithRetry()
+    {
+        // Retry connection until websocket is connected
+        while (!websocketConnected)
         {
-            bool isText = false;
-            string message = "";
-
-            if (bytes.Length > 0 && IsProbablyText(bytes))
+            if (!tryingToConnect)
             {
-                message = Encoding.UTF8.GetString(bytes);
-                isText = true;
-            }
+                tryingToConnect = true;
+                Debug.Log("[WebSocket] Attempting to connect...");
+                websocket = new WebSocket("ws://localhost:3000");
 
-            if (isText)
-            {
-                if (message.StartsWith("audio:"))
+                websocket.OnOpen += () =>
                 {
-                    nextAudioType = message.Substring("audio:".Length).Trim(); // fallback or response
-                    Debug.Log("[WebSocket] Next audio type set to: " + nextAudioType);
-                }
-                else if (message.StartsWith("expression:") || message.StartsWith("animation:"))
+                    websocketConnected = true;
+                    Debug.Log("[WebSocket] Connection open!");
+                };
+                websocket.OnError += (e) => Debug.Log("[WebSocket] Error! " + e);
+                websocket.OnClose += (e) =>
                 {
-                    Debug.Log("[WebSocket] Received OnMessage! " + message);
-                    HandleCommand(message);
+                    websocketConnected = false;
+                    Debug.Log("[WebSocket] Connection closed!");
+                };
+
+                websocket.OnMessage += (bytes) =>
+                {
+                    bool isText = false;
+                    string message = "";
+
+                    if (bytes.Length > 0 && IsProbablyText(bytes))
+                    {
+                        message = Encoding.UTF8.GetString(bytes);
+                        isText = true;
+                    }
+
+                    if (isText)
+                    {
+                        if (message.StartsWith("audio:"))
+                        {
+                            nextAudioType = message.Substring("audio:".Length).Trim(); // fallback or response
+                            Debug.Log("[WebSocket] Next audio type set to: " + nextAudioType);
+                        }
+                        else if (message.StartsWith("expression:") || message.StartsWith("animation:"))
+                        {
+                            Debug.Log("[WebSocket] Received OnMessage! " + message);
+                            HandleCommand(message);
+                        }
+                    }
+                    else
+                    {
+                        if (nextAudioType == null)
+                        {
+                            nextAudioType = "response"; // default if not set
+                            Debug.Log("[WebSocket] No audio type set, using default 'response'.");
+                        }
+                        audioQueue.Enqueue((bytes, nextAudioType));
+                        Debug.Log($"[WebSocket] Received audio data ({bytes.Length} bytes), type: {nextAudioType} at {System.DateTime.Now:HH:mm:ss.fff}");
+                        nextAudioType = null;
+                        TryPlayNextAudio();
+                    }
+                };
+
+                // Try to connect asynchronously
+                var task = websocket.Connect();
+                while (!task.IsCompleted)
+                    yield return null;
+
+                if (!websocketConnected)
+                {
+                    Debug.Log("[WebSocket] Connection failed, retrying in 1s...");
+                    yield return new WaitForSeconds(1f);
+                    tryingToConnect = false;
                 }
             }
             else
             {
-                if (nextAudioType == null)
-                {
-                    nextAudioType = "response"; // default if not set
-                    Debug.Log("[WebSocket] No audio type set, using default 'response'.");
-                }
-                audioQueue.Enqueue((bytes, nextAudioType));
-                Debug.Log($"[WebSocket] Received audio data ({bytes.Length} bytes), type: {nextAudioType} at {System.DateTime.Now:HH:mm:ss.fff}");
-                nextAudioType = null;
-                TryPlayNextAudio();
+                // Wait a bit before next attempt if another try is ongoing
+                yield return new WaitForSeconds(1f);
             }
-        };
-
-        await websocket.Connect();
+        }
     }
 
     void Update()
@@ -166,7 +211,7 @@ public class NativeWebSocketExample : MonoBehaviour
     }
 
     // After starting audio playback, trigger pending animation/expression
-    System.Collections.IEnumerator PlayAudioCoroutine(byte[] audioBytes, string audioType)
+    IEnumerator PlayAudioCoroutine(byte[] audioBytes, string audioType)
     {
         audioIsPlaying = true;
         if (audioReceiver != null)

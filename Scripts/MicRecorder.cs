@@ -28,6 +28,34 @@ public class MicRecorder : MonoBehaviour
         SetButtonText("Record");
     }
 
+    void Update()
+    {
+        bool micPresent = Microphone.devices.Length > 0;
+        bool connected = socketSender != null && socketSender.IsConnected;
+
+        // Only allow button to be enabled when:
+        // - There is a mic
+        // - We are recording (so user can click "Stop")
+        // - Or after Mika is done and connected (AudioCommandReceiver will re-enable)
+        if (!micPresent)
+        {
+            recordButton.interactable = false;
+            SetButtonText("No Mic");
+        }
+        else if (isRecording)
+        {
+            recordButton.interactable = true;
+            SetButtonText("Stop");
+        }
+        else if (!connected)
+        {
+            // Not connected yet, keep disabled!
+            recordButton.interactable = false;
+            SetButtonText("Record");
+        }
+        // else: let AudioCommandReceiver control interactable after Mika is done talking
+    }
+
     void ToggleRecording()
     {
         if (!isRecording)
@@ -51,6 +79,7 @@ public class MicRecorder : MonoBehaviour
         int lastSample = Microphone.GetPosition(micName);
         Microphone.End(micName);
         SetButtonText("Sending...");
+        recordButton.interactable = false;
 
         float[] samples = new float[recordedClip.samples * recordedClip.channels];
         recordedClip.GetData(samples, 0);
@@ -70,11 +99,11 @@ public class MicRecorder : MonoBehaviour
         socketSender.SendAudioBytes(wavBytes);
 
         // Do NOT re-enable the button here! AudioCommandReceiver will do it.
-        SetButtonText("Record");
-        recordButton.interactable = false; // Ensure it stays disabled until TTS reply finishes
+        // SetButtonText("Record"); // Don't set here; AudioCommandReceiver sets it after Mika finishes
+        // recordButton.interactable = false; // Not needed anymore; handled in Update() and AudioCommandReceiver
     }
 
-    void SetButtonText(string text)
+    public void SetButtonText(string text)
     {
         var tmpLabel = recordButton.GetComponentInChildren<TextMeshProUGUI>();
         if (tmpLabel != null)

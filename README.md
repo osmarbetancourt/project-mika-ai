@@ -23,17 +23,16 @@ Mika is an interactive anime AI companion built with Unity that combines advance
 - **Unity Integration**: Seamless audio and animation command handling with synchronized visual responses
 - **Real-time Response**: Fallback animation system for immediate user feedback
 - **Microphone Recording**: Built-in voice capture functionality
-- **Expression Control**: Dynamic facial expressions and lip sync synchronized with audio
+- **Expression Control**: Dynamic facial expressions and lip sync synchronized with audio - **Unity C# animation system fully implemented**
 - **Emotional Intelligence**: LLM-powered emotional reaction inference that determines appropriate animations, facial expressions, and durations based on conversation context
 - **Multi-language Support**: Supports English, Spanish, and Japanese languages
 - **LLM Integration**: Advanced AI conversations using Gemini Flash 2.5 and Flash Lite 2.5
 - **Enhanced Memory System**: Supports up to 12K tokens per request with cache for 200 most recent messages, featuring hybrid RAG approach with fuzzy search and semantic vector database
+- **Time & Date Awareness**: Mika is aware of the current day, date, and tracks when the user last sent a message
 
 ### 🚧 **Next Steps (Post-MVP)**
-- **Time & Date Awareness**: Mika will be aware of current day, time, and up-to-date information
-- **Perplexity-style Workflow**: Real-time information retrieval and processing
-- **Animation System Fixes**: Resolve Unity C# animation issues
 - **Distribution Ready**: Package as .exe or installation wizard for user consumption
+- **Enhanced Web Search**: Improved real-time information retrieval and processing capabilities *(Future consideration, not prioritized for v1)*
 
 ### 🔮 **Future Versions (Not in MVP v1)**
 - **Multi-modal Input/Output**: Vision processing for images and files *(Not in v1)*
@@ -248,8 +247,9 @@ For detailed technical documentation about Mika's internal workflow and architec
 1. **Voice Input Only**: Speak into your microphone - Mika will transcribe and respond *(MVP v1 supports audio input only)*
 2. **AI Conversations**: Mika features advanced AI conversations powered by Google Vertex AI with intelligent memory management
 3. **Multi-language**: Interact in English, Spanish, or Japanese
-4. **Synchronized Responses**: Enjoy perfectly timed animations and expressions that match Mika's voice responses
+4. **Synchronized Responses**: Enjoy perfectly timed animations and expressions that match Mika's voice responses with the fully implemented Unity C# animation system
 5. **Intelligent Memory**: Mika uses hybrid RAG with fuzzy search and semantic vectors to remember relevant context from up to 200 recent messages
+6. **Time Awareness**: Mika knows what day it is and tracks when you last sent a message, providing contextually relevant responses
 
 ## 🎯 Development Status
 
@@ -265,16 +265,16 @@ For detailed technical documentation about Mika's internal workflow and architec
 | Emotional Intelligence | ✅ Implemented | LLM-powered emotion inference |
 | Hybrid Memory System | ✅ Implemented | 12K tokens, 200-message cache, fuzzy + semantic search |
 | Multi-language Support | ✅ Implemented | English, Spanish, Japanese |
+| Time/Date Awareness | ✅ Implemented | Current day, time, last message timestamp tracking |
+| Unity Animation System | ✅ Implemented | C# animation and expression system fixed |
 | **Next Steps** | | |
-| Time/Date Awareness | 🔄 Next Priority | Current day, time, up-to-date info |
-| Perplexity Workflow | 🔄 Next Priority | Real-time information processing |
-| Unity Animation Fixes | 🔄 Next Priority | C# animation system improvements |
 | Distribution Package | 🔄 Next Priority | .exe/installer for users |
+| Enhanced Web Search | 🔄 Future Consideration | Real-time information processing *(not v1 priority)* |
 | **Future Features** | | |
 | Multi-modal Input/Output | ❌ Not in v1 | Images, files (future version) |
 | URL Parsing | ❌ Not in v1 | Web content processing |
 | Plugin System | 🔄 Future | Extensible functionality |
-| Advanced Web Search | 🔄 Future | Real-time information with citations |
+| Advanced Web Search | 🔄 Future | Real-time information with citations *(deprioritized for v1)* |
 | Vision Processing | 🔄 Future | Image and file analysis |
 
 ## 🤝 Contributing
@@ -297,17 +297,17 @@ We welcome contributions to make Mika even better! Here's how you can help:
 - [x] Hybrid memory system (12K tokens, 200-message cache)
 - [x] RAG implementation (fuzzy search + semantic vector database)
 - [x] Multi-language support (EN/ES/JP)
+- [x] Time and date awareness with message timestamp tracking
+- [x] Unity C# animation and expression system implementation
 
 ### Phase 2: MVP v1 Polish (Next - In Progress)
-- [ ] Time and date awareness
-- [ ] Up-to-date information processing (Perplexity-style workflow)
-- [ ] Unity C# animation system fixes
 - [ ] Distribution packaging (.exe/installer)
+- [ ] Performance optimization and stability improvements
 
 ### Phase 3: Enhanced Features (Future)
 - [ ] Multi-modal input (images, files, text)
 - [ ] URL parsing and web content processing
-- [ ] Advanced web search with citations
+- [ ] Enhanced web search with real-time information *(reconsidering priority)*
 - [ ] Plugin ecosystem and API integrations
 
 ### Phase 4: Advanced AI & Polish (Future)

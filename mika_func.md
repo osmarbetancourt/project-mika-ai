@@ -138,6 +138,7 @@ flowchart TD
 %% - Persona and world state are continually updated using extracted facts and semantic memories.
 %% - System can handle large memory tables efficiently, limiting prompt injection to only top results.
 %% - All new architecture supports multi-language (English, Spanish, Japanese), with dynamic switching.
+%% - New package already deployed
 
 %% -------------------------------------------------------------------------------------
 ```

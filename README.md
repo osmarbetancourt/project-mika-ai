@@ -9,6 +9,19 @@
 
 Mika is an interactive anime AI companion built with Unity that combines advanced speech processing, artificial intelligence, and real-time avatar animation to create an engaging conversational experience. Whether you want to chat, ask questions, or simply interact with a responsive AI personality, Mika brings your anime companion dreams to life.
 
+## 🎯 Current Release Status
+
+**v0.0.1 Pre-Release Available** 🚧
+
+We have released our first pre-release version **v0.0.1** of Mika! This initial release includes the core backend infrastructure that powers Mika's interactions.
+
+**What's included in v0.0.1:**
+- **Python Backend Server**: A robust server implementation that handles all interactions with Mika
+- **WebSocket Communication**: Real-time bidirectional communication between the Python backend and Unity frontend
+- **Core AI Pipeline**: Foundation for voice processing, LLM integration, and response generation
+
+**Important Note**: This is a **pre-release version** and is **not yet production-ready**. It's designed for developers and early testers who want to explore Mika's underlying architecture and contribute to the project.
+
 ### ✨ Recent Technical Improvements
 - **Google Vertex AI Integration**: Migrated from hardcoded API URLs to official Google Vertex AI SDK for Python
 - **Hybrid RAG Architecture**: Combines fuzzy search on facts table with semantic vector database (Faiss) for intelligent context retrieval
